@@ -64,11 +64,16 @@ print("Änderung Spritpreise")
 
 # [row][colum]
 test_piv = gas_schema.filter(gas_schema.uuid == station_schema.collect()[1][0])
-test_piv2 = gas_schema.filter(gas_schema.uuid == station_schema.collect()[2][0])
 test_piv.show()
 
 #gas_station = station_schema.join(test_piv, station_schema.uuid == test_piv.uuid,"inner")
 #gas_station.show()
+
+dict_list2 = []
+station_schema_collect = station_schema.collect()
+#station_schema.count()-2
+for i in range(1, 100):
+        dict_list2.append({'label': station_schema_collect[i][1], 'value': station_schema_collect[i][0]})
 
 
 app = dash.Dash(__name__)
@@ -81,7 +86,20 @@ app.layout = html.Div(
                 children = [
                     html.H2('DASH - STOCK PRICES'),
                     html.P('Visualising time series with Plotly - Dash.'),
-                    html.P('Pick one or more stocks from the dropdown below.')]
+                    html.P('Pick one or more stocks from the dropdown below.'),
+                    
+                    html.Div(
+                       className='div-for-dropdown',
+                       children=[
+                        dcc.Dropdown(id='stockselector', options=dict_list2,
+                            multi=False, 
+                            style={'backgroundColor': '#1E1E1E'},
+                            className='stockselector'
+                           ),
+                       ],
+                    style={'color': '#1E1E1E'})
+                                     
+                    ]
                 ),  
                 
             # Define the right element
@@ -102,21 +120,7 @@ app.layout = html.Div(
                                     xaxis_title='Uhrzeit',
                                     legend_title='Benzinart',
                                     title=station_schema.collect()[1][1])
-                ),
-                dcc.Graph(id='timeseries2',
-                config={'displayModeBar': False},
-                animate=True,
-                    figure=px.line(test_piv2.toPandas(),
-                         x='date',
-                         y=['diesel','e5','e10'],
-                         template='plotly_dark').update_layout(
-                                   {'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                                    'paper_bgcolor': 'rgba(0, 0, 0, 0)'},
-                                    yaxis_title='Preis',
-                                    xaxis_title='Uhrzeit',
-                                    legend_title='Benzinart',
-                                    title=station_schema.collect()[2][1])
-                    )   
+                )
                 ])                       
             ])     
     ])
