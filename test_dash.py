@@ -7,6 +7,7 @@ from dash import html
 
 from dash import dcc
 import plotly.express as px
+import plotly.graph_objects as go
 
 from pyspark.sql import SQLContext, SparkSession 
 from pyspark.sql.types import StructType, DateType, StringType, IntegerType, TimestampType
@@ -75,6 +76,25 @@ station_schema_collect = station_schema.collect()
 for i in range(1, 100):
         dict_list2.append({'label': station_schema_collect[i][1], 'value': station_schema_collect[i][0]})
 
+lat_list = []
+lon_list = []
+name_list = []
+for i in range(1, 100):
+        lon_list.append({'lon': float(station_schema_collect[i][8])})
+        lat_list.append({'lat': float(station_schema_collect[i][7])})
+        name_list.append({'name': station_schema_collect[i][1]})
+
+fig = go.Figure(data=go.Scattergeo(
+    lon = lat_list,
+    lat = lon_list,
+    text = name_list,
+    mode = 'markers'
+))
+
+fig.update_layout(
+    geo_scope='europe'
+)
+
 
 app = dash.Dash(__name__)
 app.layout = html.Div(
@@ -106,7 +126,7 @@ app.layout = html.Div(
             html.Div(className='eight columns div-for-charts bg-grey',
                 children = [
                 
-                
+
                 dcc.Graph(id='timeseries',
                 config={'displayModeBar': False},
                 animate=True,
@@ -121,6 +141,8 @@ app.layout = html.Div(
                                     legend_title='Benzinart',
                                     title=station_schema.collect()[1][1])
                 )
+
+                
                 ])                       
             ])     
     ])
