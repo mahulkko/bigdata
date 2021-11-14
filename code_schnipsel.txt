@@ -1,0 +1,16 @@
+dcc.Graph(id='timeseries',
+                config={'displayModeBar': False},
+                animate=True,
+                
+                    figure=px.line(test_piv.toPandas(),
+                         x='date',
+                         y=['diesel','e5','e10'],
+                         template='plotly_dark').update_layout(
+                                   {'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                                    'paper_bgcolor': 'rgba(0, 0, 0, 0)'},
+                                    yaxis_title='Preis',
+                                    xaxis_title='Uhrzeit',
+                                    legend_title='Benzinart',
+                                    title=station_schema.collect()[1][1])
+                
+                ) 
